@@ -120,8 +120,15 @@ namespace SergioGuijarroDeCabo
         private void btnnuevopedido_Click(object sender, EventArgs e)
         {
             Pedido pedido = new Pedido(this.txtcodigopedido.Text, this.codigoClienteSeleccionado, this.txtfechaentrega.Text, this.txtformaenvio.Text,  int.Parse(this.txtimporte.Text));
-            
-        
+
+            int pedidoInsertado = this.repo.insertarPedido(pedido);
+            MessageBox.Show(pedidoInsertado + " pedido insertado");
+            this.cargarPedidos();
+        }
+
+        private void btneliminarpedido_Click(object sender, EventArgs e)
+        {
+            int pedidoEliminado = this.repo.eliminarPedido(this.txtcodigopedido.Text);
         }
     }
 }

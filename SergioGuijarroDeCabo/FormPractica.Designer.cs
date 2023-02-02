@@ -250,6 +250,7 @@
             this.btneliminarpedido.TabIndex = 26;
             this.btneliminarpedido.Text = "Eliminar pedido";
             this.btneliminarpedido.UseVisualStyleBackColor = true;
+            this.btneliminarpedido.Click += new System.EventHandler(this.btneliminarpedido_Click);
             // 
             // txtcodigopedido
             // 

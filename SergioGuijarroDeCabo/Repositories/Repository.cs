@@ -72,6 +72,15 @@ using SergioGuijarroDeCabo.Models;
 
 //INSERT INTO pedidos (CodigoPedido, CodigoCliente, FechaEntrega, FormaEnvio, Importe) VALUES(@CODIGOPEDIDO, @CODIGOCLIENTE, @FECHAENTREGA, @FORMAENVIO, @IMPORTE)
 
+//GO
+
+
+
+
+//CREATE OR ALTER PROCEDURE SP_ELIMINAR_PEDIDO
+//(@CODIGOPEDIDO NVARCHAR(50))
+//AS
+//DELETE FROM pedidos WHERE CodigoPedido= @CODIGOPEDIDO
 
 //GO
 
@@ -253,6 +262,54 @@ namespace SergioGuijarroDeCabo.Repositories
 
             return clienteModificado;
         }
+      
 
+        public int insertarPedido(Pedido pedido)
+        {
+            int pedidoInsertado = 0;
+
+
+            SqlParameter pamcodigopedido = new SqlParameter("@CODIGOPEDIDO", pedido.CodigoPedido);
+            this.com.Parameters.Add(pamcodigopedido);
+            SqlParameter pamcodigocliente = new SqlParameter("@CODIGOCLIENTE", pedido.CodigoCliente);
+            this.com.Parameters.Add(pamcodigocliente);
+            SqlParameter pamfechaentrega = new SqlParameter("@FECHAENTREGA", pedido.FechaEntrega);
+            this.com.Parameters.Add(pamfechaentrega);
+            SqlParameter pamformaenvio = new SqlParameter("@FORMAENVIO", pedido.FormaEnvio);
+            this.com.Parameters.Add(pamformaenvio);
+            SqlParameter pamimporte = new SqlParameter("@IMPORTE", pedido.Importe);
+            this.com.Parameters.Add(pamimporte);
+          
+
+            this.com.CommandType = System.Data.CommandType.StoredProcedure;
+            this.com.CommandText = "SP_NUEVO_PEDIDO";
+
+            this.cn.Open();
+            pedidoInsertado = this.com.ExecuteNonQuery();
+            this.com.Parameters.Clear();
+            this.cn.Close();
+
+
+            return pedidoInsertado;
+        }
+
+        public int eliminarPedido(string codigoPedido)
+        {
+            int pedidoEliminado = 0;
+
+            SqlParameter pamcodigopedido = new SqlParameter("@CODIGOPEDIDO", codigoPedido);
+            this.com.Parameters.Add(pamcodigopedido);
+
+
+            this.com.CommandType = System.Data.CommandType.StoredProcedure;
+            this.com.CommandText = "SP_ELIMINAR_PEDIDO";
+
+            this.cn.Open();
+            pedidoEliminado = this.com.ExecuteNonQuery();
+            this.com.Parameters.Clear();
+            this.cn.Close();
+
+            return pedidoEliminado;
+        }
     }
 }
