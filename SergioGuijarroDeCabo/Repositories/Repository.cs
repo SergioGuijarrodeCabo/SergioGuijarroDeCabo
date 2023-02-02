@@ -19,6 +19,17 @@ using SergioGuijarroDeCabo.Models;
 //exec SP_CARGAR_CLIENTES
 
 
+//CREATE OR ALTER PROCEDURE SP_CARGAR_PEDIDOS
+//(@CODIGOCLIENTE NVARCHAR(50))
+
+//AS
+
+//SELECT * FROM pedidos WHERE CodigoCliente = @CODIGOCLIENTE
+
+//GO
+
+
+
 #endregion
 
 
@@ -71,6 +82,37 @@ namespace SergioGuijarroDeCabo.Repositories
 
             return listaClientes;
 
+        }
+
+
+        public List<Pedido> cargarPedidos(string codigocliente)
+        {
+            List<Pedido> listaPedidos = new List<Pedido>();
+
+            SqlParameter pamcodigocliente = new SqlParameter("@CODIGOCLIENTE", codigocliente);
+         
+            this.com.Parameters.Add(pamcodigocliente);
+            this.com.CommandType = System.Data.CommandType.StoredProcedure;
+            this.com.CommandText = "SP_CARGAR_PEDIDOS";
+            this.cn.Open();
+            this.reader = this.com.ExecuteReader();
+            while (this.reader.Read())
+
+            {
+                string CodigoPedido = this.reader["CodigoPedido"].ToString();
+                string CodigoCliente = this.reader["CodigoCliente"].ToString();
+                string FechaEntrega = this.reader["FechaEntrega"].ToString();
+                string FormaEnvio = this.reader["FormaEnvio"].ToString();            
+                int Importe = int.Parse(this.reader["Importe"].ToString());
+
+                Pedido pedido = new Pedido(CodigoPedido, CodigoCliente, FechaEntrega, FormaEnvio, Importe);
+                listaPedidos.Add(pedido);
+            }
+            this.com.Parameters.Clear();
+            this.reader.Close();
+            this.cn.Close();
+
+            return listaPedidos;
         }
 
     }

@@ -37,5 +37,40 @@ namespace SergioGuijarroDeCabo
                 cmbclientes.Items.Add(listaClientes[i].Contacto.ToString());
             }
         }
+
+        public void cargarPedidos(string codigocliente)
+        {
+            List<Pedido> pedidos = new List<Pedido>();
+            pedidos = this.repo.cargarPedidos(codigocliente);
+
+            for (int i = 0; i < pedidos.Count; i++)
+            {
+                lstpedidos.Items.Add(pedidos[i].FechaEntrega);
+
+            }
+
+        }
+
+        private void cmbclientes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string nombre = cmbclientes.SelectedItem.ToString();
+            string codigoCliente = "";
+            for(int i = 0; i < this.listaClientes.Count; i++)
+            {
+                if (nombre.Equals(this.listaClientes[i].Contacto))
+                {
+                    txtcargo.Text = this.listaClientes[i].Cargo;
+                    txtciudad.Text = this.listaClientes[i].Ciudad;
+                    txttelefono.Text = this.listaClientes[i].Telefono.ToString();
+                    txtcontacto.Text = this.listaClientes[i].Contacto;
+                    txtempresa.Text = this.listaClientes[i].Empresa;
+                    codigoCliente = this.listaClientes[i].CodigoCliente;
+
+                }
+
+            }
+
+            this.cargarPedidos(codigoCliente);
+        }
     }
 }
