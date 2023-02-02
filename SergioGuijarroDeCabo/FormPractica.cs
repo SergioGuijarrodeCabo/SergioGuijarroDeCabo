@@ -119,16 +119,26 @@ namespace SergioGuijarroDeCabo
 
         private void btnnuevopedido_Click(object sender, EventArgs e)
         {
+            if (this.txtcodigopedido.Text.Equals("") || this.codigoClienteSeleccionado.Equals("") || this.txtfechaentrega.Text.Equals("") || this.txtformaenvio.Text.Equals("") || this.txtimporte.Text.Equals("") ) 
+            {
+                MessageBox.Show("Faltan datos para añadir un nuevo pedido");
+            }
+            else { 
+
+
             Pedido pedido = new Pedido(this.txtcodigopedido.Text, this.codigoClienteSeleccionado, this.txtfechaentrega.Text, this.txtformaenvio.Text,  int.Parse(this.txtimporte.Text));
 
             int pedidoInsertado = this.repo.insertarPedido(pedido);
             MessageBox.Show(pedidoInsertado + " pedido insertado");
             this.cargarPedidos();
+            }
         }
 
         private void btneliminarpedido_Click(object sender, EventArgs e)
         {
             int pedidoEliminado = this.repo.eliminarPedido(this.txtcodigopedido.Text);
+            MessageBox.Show(pedidoEliminado + " pedido eliminado");
+            this.cargarPedidos();
         }
     }
 }
