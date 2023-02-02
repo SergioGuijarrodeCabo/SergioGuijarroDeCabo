@@ -29,6 +29,51 @@ using SergioGuijarroDeCabo.Models;
 //GO
 
 
+//CREATE OR ALTER PROCEDURE SP_BUSCAR_CLIENTE
+//(@CONTACTO NVARCHAR(50))
+//AS
+//SELECT * FROM clientes WHERE Contacto =@CONTACTO
+//GO
+
+
+
+
+//CREATE OR ALTER PROCEDURE SP_BUSCAR_PEDIDO
+//(@FECHA NVARCHAR(50))
+//AS
+//SELECT * FROM pedidos WHERE FechaEntrega =@FECHA
+//GO
+
+
+//CREATE OR ALTER PROCEDURE SP_MODIFICAR_CLIENTE
+//(@CODIGOCLIENTE NVARCHAR(50),
+//@EMPRESA NVARCHAR(50),
+//@CONTACTO NVARCHAR(50),
+//@CARGO NVARCHAR(50),
+//@CIUDAD NVARCHAR(50),
+//@TELEFONO INT)
+
+//as
+//UPDATE clientes SET Empresa=@EMPRESA, Contacto = @CONTACTO, Cargo = @CARGO, Ciudad = @CIUDAD, Telefono = @TELEFONO WHERE CodigoCliente=@CODIGOCLIENTE
+
+//go
+
+
+
+
+//CREATE OR ALTER PROCEDURE SP_NUEVO_PEDIDO
+//(@CODIGOPEDIDO NVARCHAR(50),
+//@CODIGOCLIENTE NVARCHAR(50),
+//@FECHAENTREGA NVARCHAR(50),
+//@FORMAENVIO NVARCHAR(50),
+//@IMPORTE INT)
+
+//AS
+
+//INSERT INTO pedidos (CodigoPedido, CodigoCliente, FechaEntrega, FormaEnvio, Importe) VALUES(@CODIGOPEDIDO, @CODIGOCLIENTE, @FECHAENTREGA, @FORMAENVIO, @IMPORTE)
+
+
+//GO
 
 #endregion
 
@@ -54,13 +99,41 @@ namespace SergioGuijarroDeCabo.Repositories
         }
 
 
-        public List<Cliente> cargarClientes()
+        public List<string> cargarClientes()
         {
-            List<Cliente> listaClientes = new List<Cliente>();
+            List<string> listaClientes = new List<string>();
 
             this.com.CommandType = System.Data.CommandType.StoredProcedure;
             this.com.CommandText = "SP_CARGAR_CLIENTES";
 
+            this.cn.Open();
+            this.reader = this.com.ExecuteReader();
+            while (this.reader.Read())
+
+            {
+               
+                string Contacto = this.reader["Contacto"].ToString();
+                
+
+                
+                listaClientes.Add(Contacto);
+            }
+            this.reader.Close();
+            this.cn.Close();
+
+
+            return listaClientes;
+
+        }
+
+        public Cliente cargarCliente(string contacto)
+        {
+            SqlParameter pamfecha = new SqlParameter("@CONTACTO", contacto);
+
+            this.com.Parameters.Add(pamfecha);
+            this.com.CommandType = System.Data.CommandType.StoredProcedure;
+            this.com.CommandText = "SP_BUSCAR_CLIENTE";
+            Cliente cliente = null;
             this.cn.Open();
             this.reader = this.com.ExecuteReader();
             while (this.reader.Read())
@@ -73,14 +146,45 @@ namespace SergioGuijarroDeCabo.Repositories
                 string Ciudad = this.reader["Ciudad"].ToString();
                 int Telefono = int.Parse(this.reader["Telefono"].ToString());
 
-                Cliente cliente = new Cliente(CodigoCliente, Empresa, Contacto, Cargo, Ciudad, Telefono);
-                listaClientes.Add(cliente);
+                 cliente = new Cliente(CodigoCliente, Empresa, Contacto, Cargo, Ciudad, Telefono);
+
+
             }
+            this.com.Parameters.Clear();
             this.reader.Close();
             this.cn.Close();
+            return cliente;
 
+        }
 
-            return listaClientes;
+        public Pedido cargarPedido(string fecha)
+        {
+
+            SqlParameter pamfecha = new SqlParameter("@FECHA", fecha);
+            
+            this.com.Parameters.Add(pamfecha);
+            this.com.CommandType = System.Data.CommandType.StoredProcedure;
+            this.com.CommandText = "SP_BUSCAR_PEDIDO";
+            Pedido pedido = null;
+            this.cn.Open();
+            this.reader = this.com.ExecuteReader();
+            while (this.reader.Read())
+
+            {
+                string CodigoPedido = this.reader["CodigoPedido"].ToString();
+                string CodigoCliente = this.reader["CodigoCliente"].ToString();
+                string FechaEntrega = this.reader["FechaEntrega"].ToString();
+                string FormaEnvio = this.reader["FormaEnvio"].ToString();
+                int Importe = int.Parse(this.reader["Importe"].ToString());
+
+                 pedido = new Pedido(CodigoPedido, CodigoCliente, FechaEntrega, FormaEnvio, Importe);
+             
+
+            }
+            this.com.Parameters.Clear();
+            this.reader.Close();
+            this.cn.Close();
+            return pedido;
 
         }
 
@@ -113,6 +217,41 @@ namespace SergioGuijarroDeCabo.Repositories
             this.cn.Close();
 
             return listaPedidos;
+        }
+
+
+        public int modificarCliente(Cliente cliente)
+        {
+            int clienteModificado = 0;
+
+            SqlParameter pamcodigocliente = new SqlParameter("@CODIGOCLIENTE", cliente.CodigoCliente);
+            this.com.Parameters.Add(pamcodigocliente);
+            SqlParameter pamempresa = new SqlParameter("@EMPRESA", cliente.Empresa);
+            this.com.Parameters.Add(pamempresa);
+            SqlParameter pamcontacto = new SqlParameter("@CONTACTO", cliente.Contacto);
+            this.com.Parameters.Add(pamcontacto);
+            SqlParameter pamcargo = new SqlParameter("@CARGO", cliente.Cargo);
+            this.com.Parameters.Add(pamcargo);
+            SqlParameter pamciudad = new SqlParameter("@CIUDAD", cliente.Ciudad);
+            this.com.Parameters.Add(pamciudad);
+            SqlParameter pamtelefono = new SqlParameter("@TELEFONO", cliente.Telefono);
+            this.com.Parameters.Add(pamtelefono);
+
+
+            this.com.CommandType = System.Data.CommandType.StoredProcedure;
+            this.com.CommandText = "SP_MODIFICAR_CLIENTE";
+
+            this.cn.Open();
+            clienteModificado = this.com.ExecuteNonQuery();
+            this.com.Parameters.Clear();
+            this.cn.Close();
+
+
+
+
+            
+
+            return clienteModificado;
         }
 
     }

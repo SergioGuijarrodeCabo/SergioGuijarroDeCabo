@@ -16,36 +16,49 @@ namespace SergioGuijarroDeCabo
     {
 
         private Repository repo;
-        public List<Cliente> listaClientes;
 
+        public List<Pedido> listaPedidos;
+        public string codigoClienteSeleccionado;
         public FormPractica()
         {
 
             InitializeComponent();
             this.repo = new Repository();
-            this.listaClientes = new List<Cliente>();
+
             this.cargarClientes();
         }
 
         public void cargarClientes()
         {
-            this.listaClientes = this.repo.cargarClientes();
+            this.cmbclientes.Items.Clear();
+            this.txtcargo.Text = "";
+            this.txtciudad.Text = "";
+            this.txttelefono.Text = "";
+            this.txtcontacto.Text = "";
+            this.txtempresa.Text = "";
+            this.codigoClienteSeleccionado = "";
+            List<string> clientes= this.repo.cargarClientes();
 
 
-            for (int i = 0; i < listaClientes.Count; i++)
+            for (int i = 0; i < clientes.Count; i++)
             {
-                cmbclientes.Items.Add(listaClientes[i].Contacto.ToString());
+                this.cmbclientes.Items.Add(clientes[i].ToString());
             }
         }
 
-        public void cargarPedidos(string codigocliente)
+        public void cargarPedidos()
         {
+            this.lstpedidos.Items.Clear();
+            this.txtcodigopedido.Clear();
+            this.txtfechaentrega.Clear();
+            this.txtformaenvio.Clear();
+            this.txtimporte.Clear();
             List<Pedido> pedidos = new List<Pedido>();
-            pedidos = this.repo.cargarPedidos(codigocliente);
+            pedidos = this.repo.cargarPedidos(this.codigoClienteSeleccionado);
 
             for (int i = 0; i < pedidos.Count; i++)
             {
-                lstpedidos.Items.Add(pedidos[i].FechaEntrega);
+                this.lstpedidos.Items.Add(pedidos[i].FechaEntrega);
 
             }
 
@@ -53,24 +66,62 @@ namespace SergioGuijarroDeCabo
 
         private void cmbclientes_SelectedIndexChanged(object sender, EventArgs e)
         {
+            this.cargarCliente();
+            
+        }
+
+        public void cargarCliente()
+        {
             string nombre = cmbclientes.SelectedItem.ToString();
-            string codigoCliente = "";
-            for(int i = 0; i < this.listaClientes.Count; i++)
-            {
-                if (nombre.Equals(this.listaClientes[i].Contacto))
-                {
-                    txtcargo.Text = this.listaClientes[i].Cargo;
-                    txtciudad.Text = this.listaClientes[i].Ciudad;
-                    txttelefono.Text = this.listaClientes[i].Telefono.ToString();
-                    txtcontacto.Text = this.listaClientes[i].Contacto;
-                    txtempresa.Text = this.listaClientes[i].Empresa;
-                    codigoCliente = this.listaClientes[i].CodigoCliente;
 
-                }
+            Cliente cliente = this.repo.cargarCliente(nombre);
 
-            }
 
-            this.cargarPedidos(codigoCliente);
+          
+                    this.txtcargo.Text = cliente.Cargo;
+                    this.txtciudad.Text = cliente.Ciudad;
+                    this.txttelefono.Text = cliente.Telefono.ToString();
+                    this.txtcontacto.Text = cliente.Contacto;
+                    this.txtempresa.Text = cliente.Empresa;
+                    this.codigoClienteSeleccionado = cliente.CodigoCliente;
+
+               
+
+            this.cargarPedidos();
+        }
+
+        private void lstpedidos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+
+            string fecha = lstpedidos.Text;
+            Pedido pedido = this.repo.cargarPedido(fecha);
+            this.txtcodigopedido.Text = pedido.CodigoPedido;
+            this.txtfechaentrega.Text = pedido.FechaEntrega;
+            this.txtformaenvio.Text = pedido.FormaEnvio;
+            this.txtimporte.Text = pedido.Importe.ToString(); 
+        }
+
+        private void btnmodificarcliente_Click(object sender, EventArgs e)
+        {
+            Cliente cliente = new Cliente(this.codigoClienteSeleccionado, this.txtempresa.Text, this.txtcontacto.Text, this.txtcargo.Text, this.txtciudad.Text, int.Parse(this.txttelefono.Text));
+
+                int clienteModificado = this.repo.modificarCliente(cliente);
+            MessageBox.Show(clienteModificado + " cliente modificado");
+
+            this.cargarClientes();
+        }
+
+        private void FormPractica_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnnuevopedido_Click(object sender, EventArgs e)
+        {
+            Pedido pedido = new Pedido(this.txtcodigopedido.Text, this.codigoClienteSeleccionado, this.txtfechaentrega.Text, this.txtformaenvio.Text,  int.Parse(this.txtimporte.Text));
+            
+        
         }
     }
 }

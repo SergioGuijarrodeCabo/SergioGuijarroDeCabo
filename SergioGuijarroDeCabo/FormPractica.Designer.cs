@@ -171,6 +171,7 @@
             this.lstpedidos.Name = "lstpedidos";
             this.lstpedidos.Size = new System.Drawing.Size(223, 340);
             this.lstpedidos.TabIndex = 15;
+            this.lstpedidos.SelectedIndexChanged += new System.EventHandler(this.lstpedidos_SelectedIndexChanged);
             // 
             // txtfechaentrega
             // 
@@ -229,6 +230,7 @@
             this.btnnuevopedido.TabIndex = 24;
             this.btnnuevopedido.Text = "Nuevo pedido";
             this.btnnuevopedido.UseVisualStyleBackColor = true;
+            this.btnnuevopedido.Click += new System.EventHandler(this.btnnuevopedido_Click);
             // 
             // btnmodificarcliente
             // 
@@ -238,6 +240,7 @@
             this.btnmodificarcliente.TabIndex = 25;
             this.btnmodificarcliente.Text = "Modificar cliente";
             this.btnmodificarcliente.UseVisualStyleBackColor = true;
+            this.btnmodificarcliente.Click += new System.EventHandler(this.btnmodificarcliente_Click);
             // 
             // btneliminarpedido
             // 
@@ -298,6 +301,7 @@
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "FormPractica";
             this.Text = "Clientes pedidos";
+            this.Load += new System.EventHandler(this.FormPractica_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
